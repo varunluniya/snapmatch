@@ -1,7 +1,7 @@
 """
 Historical return data + pattern-mining.
 
-Per the assignment's data/AI-capability answer: historical return data does
+Historical return data does
 two jobs here -- (1) find which product categories have high
 mismatch-driven return rates, so pre-listing review effort gets prioritized
 where it matters most, and (2) serve as training/fine-tuning signal for the

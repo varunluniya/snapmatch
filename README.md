@@ -1,4 +1,7 @@
-# Pre-Listing Mismatch Detector
+# SnapMatch
+
+_Flags product photo/description mismatches before listings go live._
+
 
 Catches "item doesn't match the photo" *before* a product ever goes live —
 instead of processing the resulting returns faster after a customer is
@@ -59,11 +62,6 @@ dataset this sandbox doesn't have.
 - `run_demo.py` — runs both pieces and prints the full report.
 - `run_output.txt` — captured output from an actual run.
 
-## Background
+## Why this exists
 
-This started as Guide 1, Assignment 2 in a self-directed FDE (Forward
-Deployed Engineer) learning program — "reframe a ticket problem as an
-extraordinary problem." The assignment's own grading bar for a strong answer:
-identify the upstream cause, propose a system that flags mismatches before
-listing, and specify the data (image-description pairs, historical return
-data) needed to do it. This repo is that answer, made runnable.
+Most "process returns faster" projects optimize the wrong end of the pipeline — they speed up handling complaints instead of preventing them. The interesting move here is upstream: catch the mismatch before the listing ever goes live, and measure success by a drop in return volume, not by how fast tickets close. This repo is that idea, made runnable: identify the upstream cause, flag mismatches before listing, and be specific about what data (image-description pairs, historical return data) it takes to do it.
