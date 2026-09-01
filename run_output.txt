@@ -1,0 +1,46 @@
+==============================================================================
+PRE-LISTING MISMATCH CHECK
+==============================================================================
+[        ok        ] L-1001  similarity=0.52
+    description: Red leather jacket with silver zippers, size M, genuine cowhide leather.
+    image shows: A red leather jacket with silver zipper details, medium size, cowhide texture.
+
+[FLAGGED FOR REVIEW] L-1002  similarity=0.05
+    description: Maroon suede jacket, size L, soft suede fabric with button closure.
+    image shows: A red leather jacket with silver zipper details, worn by a model outdoors.
+
+[        ok        ] L-1003  similarity=0.50
+    description: White canvas sneakers with rubber sole, lace-up closure, unisex sizing.
+    image shows: White canvas sneakers with a rubber sole, laces, casual unisex shoe.
+
+[FLAGGED FOR REVIEW] L-1004  similarity=0.00
+    description: Black leather ankle boots with a 2-inch heel and side zipper.
+    image shows: White canvas sneakers, lace-up, casual style, worn with jeans.
+
+[        ok        ] L-1005  similarity=0.52
+    description: Wireless over-ear headphones, noise cancelling, 30-hour battery life, black.
+    image shows: Black over-ear wireless headphones with cushioned ear cups, noise cancelling.
+
+[FLAGGED FOR REVIEW] L-1006  similarity=0.00
+    description: Compact bluetooth speaker, waterproof, 12-hour playtime, blue colorway.
+    image shows: Black over-ear wireless headphones sitting on a wooden desk.
+
+[        ok        ] L-1007  similarity=0.43
+    description: Ceramic coffee mug, 12oz capacity, dishwasher safe, matte white finish.
+    image shows: A matte white ceramic mug, medium size, dishwasher safe, plain design.
+
+[FLAGGED FOR REVIEW] L-1008  similarity=0.00
+    description: Stainless steel french press coffee maker, 34oz, double-wall insulated.
+    image shows: A matte white ceramic mug sitting on a kitchen counter.
+
+-> 4/8 listings flagged before going live.
+
+==============================================================================
+HISTORICAL MISMATCH-RETURN RATE BY CATEGORY (review prioritization)
+==============================================================================
+  Jackets         60.0% of returns are description mismatches
+  Electronics     60.0% of returns are description mismatches
+  Footwear        28.6% of returns are description mismatches
+  Home Goods      27.3% of returns are description mismatches
+
+-> Prioritize pre-listing review capacity on 'Jackets' first -- it has the highest historical mismatch-driven return rate.
