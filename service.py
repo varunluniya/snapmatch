@@ -30,7 +30,8 @@ CONFLICT_RISK = {"type": 0.9, "color": 0.6, "material": 0.5}
 LOW_SIM_WEIGHT = 0.5
 STEP = 0.02
 OFFSET_BOUNDS = (-0.2, 0.15)
-SELLER_STRIKES = 2
+SELLER_STRIKES = 3
+SELLER_RATE = 0.25
 SELLER_PENALTY = 0.10
 POLICY_HEADINGS = {"type": "Product type conflict", "color": "Colour conflict",
                    "material": "Material conflict"}
@@ -67,11 +68,19 @@ class SnapMatchService:
     def seller_strikes(self, seller_id: str) -> int:
         return int(self.memory.fact(f"seller:{seller_id}", "confirmed_mismatches", 0) or 0)
 
+    def repeat_offender(self, seller_id: str) -> bool:
+        """At least SELLER_STRIKES confirmed mismatches AND a confirmed-mismatch
+        rate of SELLER_RATE or more across the seller's listings -- so a big,
+        careful seller isn't penalised just for volume."""
+        strikes = self.seller_strikes(seller_id)
+        listings = max(1, len(self.memory.history(f"seller:{seller_id}", limit=10_000)))
+        return strikes >= SELLER_STRIKES and strikes / listings >= SELLER_RATE
+
     def threshold(self, category: str, seller_id: str | None) -> dict:
         risk = self.category_risk(category)
         base = max(0.15, min(0.45, 0.45 - 0.4 * risk))
         offset = self.memory.get_param(f"offset:{category}", 0.0)
-        penalty = SELLER_PENALTY if seller_id and self.seller_strikes(seller_id) >= SELLER_STRIKES else 0.0
+        penalty = SELLER_PENALTY if seller_id and self.repeat_offender(seller_id) else 0.0
         return {"category_mismatch_rate": risk, "base": round(base, 4), "learned_offset": offset,
                 "seller_penalty": penalty, "hold_threshold": round(max(0.1, base + offset - penalty), 4)}
 
@@ -108,7 +117,7 @@ class SnapMatchService:
                .add("category", category)
                .add("category_mismatch_rate", t["category_mismatch_rate"], "share of returns that are mismatches")
                .add("seller_strikes", self.seller_strikes(seller_id) if seller_id else None,
-                    f">= {SELLER_STRIKES} confirmed mismatches tightens the threshold"))
+                    f">= {SELLER_STRIKES} confirmed mismatches and >= {SELLER_RATE:.0%} of listings tightens the threshold"))
         trace.context = ctx.as_dict()
         trace.memory = {"seller_history": len(self.memory.history(f"seller:{seller_id}")) if seller_id else 0}
 

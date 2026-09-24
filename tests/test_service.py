@@ -50,7 +50,7 @@ def test_offsets_are_bounded(svc):
 
 
 def test_repeat_offender_seller_gets_stricter_threshold(svc):
-    for k in range(2):
+    for k in range(3):
         r = svc.check(f"s{k}", "Jackets", "Black jacket", "Brown jacket", seller_id="acme")
         svc.review(r["decision_id"], "mismatch")
     assert svc.threshold("Jackets", "acme")["seller_penalty"] > 0

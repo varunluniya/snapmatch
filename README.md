@@ -49,6 +49,17 @@ curl -X POST localhost:8000/check -H 'content-type: application/json' -d '{"list
 | `GET /categories` · `GET /metrics` | Live thresholds, review precision, missed mismatches |
 | `GET /knowledge/search` · `/memory/facts` · `/params` · `/health` | Inspect each layer |
 
+## Demo data
+
+`python seed.py` fills `data/snapmatch.db` with synthetic history so every endpoint returns something meaningful on first run: 600 listings from 40 sellers over 6 months, reviewer verdicts on held listings, post-listing returns, learned per-category thresholds, and the sellers that tripped the repeat-offender rule.
+
+```bash
+python seed.py            # create data/snapmatch.db
+python seed.py --reset    # rebuild it from scratch
+```
+
+The Docker image seeds `/data` on first boot (set `GEN4_SEED=0` to start empty). All of it is synthetic: no real customers, patients, tickets or model outputs. `GET /health` shows the dataset's counts.
+
 ---
 
 ## The original engine (v1)

@@ -24,4 +24,4 @@ Categories where most returns are for size or change of mind (footwear, home goo
 Thresholds move automatically as return data arrives, in small bounded steps.
 
 ## Seller history
-Sellers with repeated confirmed mismatches get a stricter threshold on every new listing until their record improves.
+Sellers with at least three confirmed mismatches that make up 25% or more of their listings get a stricter threshold on every new listing until their record improves. A large seller is not penalised for volume alone.
