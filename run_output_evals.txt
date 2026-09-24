@@ -1,0 +1,7 @@
+== SnapMatch eval ==
+cases=16 runs/case=3 accuracy=100.0% consistency=100.0%
+  learning                     acc=100.0% cons=100.0% n=1
+  no_overflag                  acc=100.0% cons=100.0% n=4
+  samples                      acc=100.0% cons=100.0% n=8
+  v1_blind_spot                acc=100.0% cons=100.0% n=3
+GATE: PASS

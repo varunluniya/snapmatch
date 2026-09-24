@@ -1,0 +1,18 @@
+id     truth        sim  v1      v2      conflicts
+L-1001 match       0.52  pass    pass    
+L-1002 mismatch    0.05  HOLD    HOLD    color:maroon->red, material:suede->leather
+L-1003 match       0.50  pass    pass    
+L-1004 mismatch    0.00  HOLD    HOLD    type:boot->sneaker, color:black->white
+L-1005 match       0.52  pass    pass    
+L-1006 mismatch    0.00  HOLD    HOLD    type:speaker->headphones, color:blue->black
+L-1007 match       0.43  pass    pass    
+L-1008 mismatch    0.00  HOLD    HOLD    type:french_press->mug, material:steel->ceramic
+H-01   mismatch    0.75  pass✗   HOLD    color:black->brown
+H-02   mismatch    0.63  pass✗   HOLD    material:steel->plastic
+H-03   match       0.58  pass    pass    
+H-04   match       0.51  pass    pass    
+H-05   match       0.38  pass    pass    
+H-06   match       0.58  pass    pass    
+H-07   mismatch    0.29  HOLD    HOLD    color:grey->black
+
+v1 correct: 13/15   v2 correct: 15/15
