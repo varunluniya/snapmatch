@@ -19,7 +19,7 @@ import os
 from pathlib import Path
 
 from attributes import conflicts as attribute_conflicts
-from gen4 import Context, KnowledgeBase, LLMClient, Memory, Trace
+from gen4 import Context, KnowledgeBase, LLMClient, Memory, Trace, guardrail_check
 from gen4 import feedback as fb
 from historical_returns import HISTORICAL_RETURNS
 from mismatch_detector import MISMATCH_THRESHOLD, _similarity
@@ -129,7 +129,7 @@ class SnapMatchService:
         trace.cite(passages)
 
         v1_flag = sim < MISMATCH_THRESHOLD
-        seller_msg = self._seller_message(found, low_sim > 0) if hold else ""
+        seller_msg = self._seller_message(found, low_sim > 0, hold, passages) if hold else ""
         out = {"listing_id": listing_id, "status": "hold_for_review" if hold else "publish",
                "mismatch_risk": risk, "similarity": sim, "conflicts": found,
                "v1_would_flag": v1_flag, "seller_message": seller_msg, "image_caption": caption}
@@ -138,7 +138,7 @@ class SnapMatchService:
                                            "listing_id": listing_id}, out)
         return {"decision_id": did, **out, "trace": trace.as_dict()}
 
-    def _seller_message(self, found: list[dict], low_sim: bool) -> str:
+    def _seller_message(self, found: list[dict], low_sim: bool, hold: bool, passages) -> str:
         def offline():
             if not found:
                 return ("Your description and photo share little detail. Please add the product type, "
@@ -147,9 +147,26 @@ class SnapMatchService:
                     f"{', '.join(c['photo_shows'])} ({c['attribute']})" for c in found]
             return "Listing held before going live: " + "; ".join(bits) + \
                    ". Please correct the photo or the description, then resubmit."
-        return self.llm.complete(f"Write a short, polite note to a seller. Conflicts: {found}. "
-                                 f"Low similarity: {low_sim}. Ask them to fix photo or description.",
-                                 offline=offline, max_tokens=120)
+        draft = self.llm.complete(f"Write a short, polite note to a seller. Conflicts: {found}. "
+                                  f"Low similarity: {low_sim}. Ask them to fix photo or description.",
+                                  offline=offline, max_tokens=120)
+        return self._guarded(draft, hold, offline(), passages)
+
+    def _guarded(self, draft: str, hold: bool, fallback: str, passages) -> str:
+        """Post-model guardrail (Guide 4 Section 7.3): this note is only ever sent
+        when the listing was actually held for review, so a draft that reads as
+        confirming the listing is live/published would directly mislead the seller
+        about the state of their own listing -- the same failure shape as the Air
+        Canada case (a fluent, confident answer that contradicts the real state)."""
+        def offline_check(response: str, _passages) -> tuple[bool, str]:
+            low = response.lower()
+            if hold and ("is now live" in low or "is published" in low or "listing is live" in low):
+                return False, "draft tells the seller the listing is live, but it was held for review"
+            return True, ""
+        is_safe, reason = guardrail_check(draft, passages, self.llm, offline=offline_check)
+        if is_safe:
+            return draft
+        return fallback + f" (Note: guardrail replaced a draft that {reason}.)"
 
     # -- feedback --------------------------------------------------------------------
     def _load(self, decision_id: str) -> dict:
